@@ -247,6 +247,9 @@ Return Value:
     this->CastF16ToF32Kernel = nullptr;
     this->CastF32ToF16Kernel = nullptr;
 
+    this->QuantizeSoftmaxI8Kernel = nullptr;
+    this->QuantizeSoftmaxU8Kernel = nullptr;
+
 #if defined(MLAS_TARGET_AMD64_IX86)
 
     //
@@ -349,7 +352,6 @@ Return Value:
             this->ReduceMaximumF32Kernel = MlasReduceMaximumF32KernelAvx;
             this->ReduceMinimumMaximumF32Kernel = MlasReduceMinimumMaximumF32KernelAvx;
             this->GemmU8U8Kernel = nullptr;
-
             //
             // Check if the processor supports AVX2/FMA3 features.
             //
@@ -391,6 +393,8 @@ Return Value:
                 this->CastF16ToF32Kernel = &MlasCastF16ToF32KernelAvx2;
                 this->CastF32ToF16Kernel = &MlasCastF32ToF16KernelAvx2;
 
+                this->QuantizeSoftmaxI8Kernel = MlasQuantizeSoftmaxI8KernelAvx2;
+                this->QuantizeSoftmaxU8Kernel = MlasQuantizeSoftmaxU8KernelAvx2;
 
                 //
                 // Check if the processor supports Hybrid core architecture.
@@ -460,6 +464,8 @@ Return Value:
                         this->FpQ4GemmDispatch = &MlasFpQ4GemmDispatchAvx512;
                         this->SQNBitGemmDispatch = &MlasSQNBitGemmDispatchAvx512;
 
+                        this->QuantizeSoftmaxI8Kernel = MlasQuantizeSoftmaxI8KernelAvx512;
+                        this->QuantizeSoftmaxU8Kernel = MlasQuantizeSoftmaxU8KernelAvx512;
                         //
                         // Check if the processor supports AVX512VNNI.
                         //
