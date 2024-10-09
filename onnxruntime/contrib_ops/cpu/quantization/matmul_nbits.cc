@@ -169,8 +169,8 @@ class MatMulNBits final : public OpKernel {
 
 template <>
 Status MatMulNBits<float>::PrePack(const Tensor& tensor, int input_idx, /*out*/ AllocatorPtr alloc,
-                                /*out*/ bool& is_packed,
-                                /*out*/ PrePackedWeights* prepacked_weights) {
+                                   /*out*/ bool& is_packed,
+                                   /*out*/ PrePackedWeights* prepacked_weights) {
   ORT_UNUSED_PARAMETER(prepacked_weights);
   is_packed = false;
   if (has_g_idx_ || has_unquantized_zero_point_) {
@@ -207,7 +207,7 @@ Status MatMulNBits<float>::PrePack(const Tensor& tensor, int input_idx, /*out*/ 
   return Status::OK();
 }
 
-#if defined(MLAS_F16VEC_INTRINSICS_SUPPORTED) // Non-Apple ARM64
+#if defined(MLAS_F16VEC_INTRINSICS_SUPPORTED)  // Non-Apple ARM64
 template <>
 Status MatMulNBits<MLFloat16>::PrePack(const Tensor& tensor, int input_idx, /*out*/ AllocatorPtr alloc,
                                        /*out*/ bool& is_packed,
@@ -354,7 +354,7 @@ Status MatMulNBits<float>::ComputeBPacked(const Tensor* a,
   return Status::OK();
 }
 
-#if defined(MLAS_F16VEC_INTRINSICS_SUPPORTED) // Non-Apple ARM64
+#if defined(MLAS_F16VEC_INTRINSICS_SUPPORTED)  // Non-Apple ARM64
 template <>
 Status MatMulNBits<MLFloat16>::ComputeBPacked(const Tensor* a,
                                               const Tensor* scales,
@@ -755,10 +755,10 @@ Status MatMulNBits<T1>::Compute(OpKernelContext* ctx) const {
   if (has_single_b_matrix &&
       packed_b_ &&
       MlasIsSQNBitGemmAvailable<T1>(nbits_, block_size_, compute_type_)) {
-        // Assume that MlasSQNBitGemmBatch() always requires packed B.
-        // If this changes, i.e., if MlasIsSQNBitGemmAvailable() can return true while
-        // MlasSQNBitGemmPackQuantBDataSize() returns 0, we can consider calling MlasSQNBitGemmBatch()
-        // with B directly too.
+    // Assume that MlasSQNBitGemmBatch() always requires packed B.
+    // If this changes, i.e., if MlasIsSQNBitGemmAvailable() can return true while
+    // MlasSQNBitGemmPackQuantBDataSize() returns 0, we can consider calling MlasSQNBitGemmBatch()
+    // with B directly too.
     return ComputeBPacked(a, scales, zero_points, bias, y, allocator, thread_pool, helper);
   }
 
