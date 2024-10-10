@@ -209,7 +209,9 @@ Status MatMulNBits<float>::PrePack(const Tensor& tensor, int input_idx, /*out*/ 
 
 #if defined(MLAS_F16VEC_INTRINSICS_SUPPORTED) && defined(MLAS_TARGET_AMD64)
 template <>
-Status MatMulNBits<MLFloat16>::PrePack(const Tensor& tensor, int input_idx, /*out*/ AllocatorPtr alloc,
+Status MatMulNBits<MLFloat16>::PrePack(const Tensor& tensor,
+                                       int input_idx,
+                                       /*out*/ AllocatorPtr alloc,
                                        /*out*/ bool& is_packed,
                                        /*out*/ PrePackedWeights* prepacked_weights) {
   ORT_UNUSED_PARAMETER(prepacked_weights);
