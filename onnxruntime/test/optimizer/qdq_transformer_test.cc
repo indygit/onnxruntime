@@ -3146,7 +3146,6 @@ TEST(QDQTransformerTests, ReluQuantFusion_ExceptOpenVINO) {
 
     constexpr float epsilon = std::numeric_limits<float>::epsilon();
 
-
     std::unique_ptr<IExecutionProvider> ep = nullptr;
     if (is_openvino) {
       ep = DefaultOpenVINOExecutionProvider();
