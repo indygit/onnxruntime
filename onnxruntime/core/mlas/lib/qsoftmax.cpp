@@ -129,10 +129,11 @@ Return Value:
         }
 #endif
         if (WorkBlock->is_signed) {
-            Ikernel(1, D, (Input), Output, LoopupTable, Scale, ZeroPoint, tempaddr);
+            Ikernel(1, D, (Input), Output, LoopupTable, Scale, static_cast<int8_t>(ZeroPoint), tempaddr);
         } else {
             Ukernel(1, D, reinterpret_cast <const uint8_t*>(Input),
-                                reinterpret_cast <uint8_t*>(Output), LoopupTable, Scale, ZeroPoint, tempaddr);
+                    reinterpret_cast <uint8_t*>(Output), LoopupTable, Scale,
+                    static_cast<uint8_t>(ZeroPoint), tempaddr);
         }
 
         Input += D;

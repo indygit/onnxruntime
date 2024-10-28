@@ -46,7 +46,7 @@ uint8_t reduce_max_u8_avx2(const uint8_t* data, size_t size) {
     max_128 = _mm_max_epu8(max_128, _mm_srli_si128(max_128, 1));
 
     // Extract the final max value
-    uint8_t max_value = _mm_extract_epi8(max_128, 0);
+    uint8_t max_value = static_cast<uint8_t>(_mm_extract_epi8(max_128, 0));
 
     for (; i < size; ++i) {
         if (data[i] > max_value) {
@@ -118,7 +118,7 @@ __m128i MlasFloatToU8Avx2(const __m256 float_val1, const __m256 float_val2 ) {
 
 float exp_and_sum_i8_avx2(const float* base_addr, const int8_t* indice, size_t size, int32_t adjustment, float* temp_out) {
     __m256 sum = _mm256_setzero_ps();
-    __m128i broadcast_adjustment = _mm_set1_epi8(adjustment);
+    __m128i broadcast_adjustment = _mm_set1_epi8(static_cast<int8_t>(adjustment));
     //======================reduce sum start=========================
     size_t i;
     for (i = 0; i + 16 <= size; i += 16) {
@@ -210,7 +210,7 @@ int32_t normalize_sum_avx2(float total_sum, size_t size, float x_scale, float* t
 
     for (; i < size; ++i) {
         int v = int32_t(std::nearbyintf(temp_out[i] * scale + yzp));
-        output[i] = v > 255?255:v;
+        output[i] = v > 255?255:static_cast<int8_t>(v);
     }
 
     return 0;
@@ -242,7 +242,7 @@ int32_t normalize_sum_avx2(float total_sum, size_t size, float x_scale, float* t
 
     for (; i < size; ++i) {
         int v = int32_t(std::nearbyintf(temp_out[i] * scale + yzp));
-        output[i] = v > 255?255:v;
+        output[i] = v > 255?255:static_cast<uint8_t>(v);
     }
 
     return 0;

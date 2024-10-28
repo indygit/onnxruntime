@@ -51,7 +51,7 @@ uint8_t reduce_max_u8_avx512(const uint8_t* data, size_t size) {
     max128 = _mm_max_epu8(max128, _mm_srli_si128(max128, 1));  // Final reduce
 
     // The maximum value is now in the first byte of max128
-    uint8_t max_value = _mm_extract_epi8(max128, 0);  // Extract the maximum value
+    uint8_t max_value = static_cast<uint8_t>(_mm_extract_epi8(max128, 0));  // Extract the maximum value
 
     for (; i < size; ++i) {
         if (data[i] > max_value) {
@@ -90,7 +90,7 @@ int8_t reduce_max_i8_avx512(const int8_t* data, size_t size) {
     max128 = _mm_max_epi8(max128, _mm_srli_si128(max128, 2));  // Further reduce
     max128 = _mm_max_epi8(max128, _mm_srli_si128(max128, 1));  // Final reduce
 
-    int8_t sc_max_value = _mm_extract_epi8(max128, 0);
+    int8_t sc_max_value = static_cast<int8_t>(_mm_extract_epi8(max128, 0));
     for (; i < size; ++i) {
         if (data[i] > sc_max_value) {
             sc_max_value = data[i];
@@ -138,7 +138,7 @@ __m128i convert_float_to_i8_avx512bw(__m512 float_vals) {
 
 float exp_and_sum_i8_avx512(const float* base_addr, const int8_t* indice, size_t size, int32_t adjustment, float* temp_out) {
     __m512 sum = _mm512_setzero_ps();
-    __m256i broadcast_adjustment = _mm256_set1_epi8(adjustment);
+    __m256i broadcast_adjustment = _mm256_set1_epi8(static_cast<int8_t>(adjustment));
 
     size_t i = 0;
     for (; i + 32 <= size; i += 32) {
@@ -244,7 +244,7 @@ int32_t normalize_sum_avx512(float total_sum, size_t size, float x_scale, float*
     }
     for (; i < size; ++i) {
         int v = int32_t(std::nearbyintf(temp_out[i] * scale + yzp));
-        output[i] = v > 255?255:v;
+        output[i] = v > 255?255:static_cast<uint8_t>(v);
     }
     return 0;
 }
@@ -265,7 +265,7 @@ int32_t normalize_sum_avx512(float total_sum, size_t size, float x_scale, float*
     }
     for (; i < size; ++i) {
         int v = int32_t(std::nearbyintf(temp_out[i] * scale + yzp));
-        output[i] = v > 255?255:v;
+        output[i] = v > 255?255:static_cast<int8_t>(v);
     }
     return 0;
 }
