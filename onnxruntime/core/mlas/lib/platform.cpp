@@ -247,9 +247,6 @@ Return Value:
     this->CastF16ToF32Kernel = nullptr;
     this->CastF32ToF16Kernel = nullptr;
 
-    this->QuantizeSoftmaxI8Kernel = nullptr;
-    this->QuantizeSoftmaxU8Kernel = nullptr;
-
 #if defined(MLAS_TARGET_AMD64_IX86)
 
     //
@@ -261,7 +258,8 @@ Return Value:
     this->GemmU8U8Dispatch = &MlasGemmU8X8DispatchSse;
 
 #if defined(MLAS_TARGET_AMD64)
-
+    this->QuantizeSoftmaxI8Kernel = nullptr;
+    this->QuantizeSoftmaxU8Kernel = nullptr;
     this->TransposePackB16x4Routine = MlasSgemmTransposePackB16x4Sse;
     this->GemmDoubleKernel = MlasGemmDoubleKernelSse;
     this->ConvNchwFloatKernel = MlasConvNchwFloatKernelSse;
