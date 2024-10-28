@@ -277,23 +277,28 @@ Status QLinearSoftmax::ComputeInternal(OpKernelContext* context, const Tensor& i
   const auto& X_shape = input.Shape();
   const size_t N = onnxruntime::narrow<size_t>(X_shape.SizeToDimension(onnxruntime::narrow<size_t>(axis)));
   const size_t D = onnxruntime::narrow<size_t>(X_shape.SizeFromDimension(onnxruntime::narrow<size_t>(axis)));
-  common::Status status;
-  if (is_signed_) {
-    using T = int8_t;
-    const T Y_zp = Y_zp_tensor ? *(Y_zp_tensor->Data<T>()) : 0;
-    status = QlinearSoftmaxCPUNaive<T>(N, D, input.Data<T>(), output.MutableData<T>(),
-                                       lookup_table.data(), Y_scale, Y_zp, thread_pool);
-    status = QlinearSoftmaxCPU<T>(N, D, input.Data<T>(), output.MutableData<T>(),
-                                  lookup_table.data(), Y_scale, Y_zp, thread_pool);
-  } else {
-    using T = uint8_t;
-    const T Y_zp = Y_zp_tensor ? *(Y_zp_tensor->Data<T>()) : 0;
-    // status = QlinearSoftmaxCPUNaive<T>(N, D, input.Data<T>(), output.MutableData<T>(),
-    //                               lookup_table.data(), Y_scale, Y_zp, thread_pool);
-    status = QlinearSoftmaxCPU<T>(N, D, input.Data<T>(), output.MutableData<T>(),
-                                  lookup_table.data(), Y_scale, Y_zp, thread_pool);
-  }
-  return status;
+  const int Y_zp = Y_zp_tensor ? (is_signed_?*(Y_zp_tensor->Data<int8_t>()):*(Y_zp_tensor->Data<uint8_t>())) : 0;
+  MlasComputeQSoftmax(input.DataRaw(), output.MutableDataRaw(), N, D, lookup_table.data(), Y_scale, Y_zp, is_signed_, thread_pool);
+
+  // common::Status status;
+  // if (is_signed_) {
+  //   using T = int8_t;
+  //   const T Y_zp = Y_zp_tensor ? *(Y_zp_tensor->Data<T>()) : 0;
+  //   // status = QlinearSoftmaxCPUNaive<T>(N, D, input.Data<T>(), output.MutableData<T>(),
+  //   //                                    lookup_table.data(), Y_scale, Y_zp, thread_pool);
+  //   // status = QlinearSoftmaxCPU<T>(N, D, input.Data<T>(), output.MutableData<T>(),
+  //   //                               lookup_table.data(), Y_scale, Y_zp, thread_pool);
+  //   MlasComputeQSoftmax(input.Data<T>(), output.MutableData<T>(), N, D, lookup_table.data(), Y_scale, Y_zp, true, thread_pool);
+  // } else {
+  //   using T = uint8_t;
+  //   const T Y_zp = Y_zp_tensor ? *(Y_zp_tensor->Data<T>()) : 0;
+  //   // status = QlinearSoftmaxCPUNaive<T>(N, D, input.Data<T>(), output.MutableData<T>(),
+  //   //                               lookup_table.data(), Y_scale, Y_zp, thread_pool);
+  //   // status = QlinearSoftmaxCPU<T>(N, D, input.Data<T>(), output.MutableData<T>(),
+  //   //                               lookup_table.data(), Y_scale, Y_zp, thread_pool);
+  //   MlasComputeQSoftmax(input.Data<T>(), output.MutableData<T>(), N, D, lookup_table.data(), Y_scale, Y_zp, false, thread_pool);
+  // }
+  return Status::OK();
 }
 
 // opset-13 and above

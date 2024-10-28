@@ -29,7 +29,7 @@ struct MLAS_QSOFTMAX_WORK_BLOCK {
     size_t D;
     const float* LoopupTable;
     float Scale;
-    float ZeroPoint;
+    int ZeroPoint;
     size_t ThreadCountN;
     bool is_signed;
 };
@@ -106,7 +106,7 @@ Return Value:
 
     const size_t D = WorkBlock->D;
     const float Scale = WorkBlock->Scale;
-    const float ZeroPoint = WorkBlock->ZeroPoint;
+    const int ZeroPoint = WorkBlock->ZeroPoint;
     const float* LoopupTable = WorkBlock->LoopupTable;
 
     const int8_t* Input = reinterpret_cast <const int8_t*>(WorkBlock->Input) + n * D;
@@ -151,7 +151,7 @@ MlasComputeQSoftmax(
     size_t D,
     const float* LoopupTable,
     float Scale,
-    float ZeroPoint,
+    int ZeroPoint,
     bool is_signed,
     MLAS_THREADPOOL* ThreadPool
 )

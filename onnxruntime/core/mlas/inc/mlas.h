@@ -1027,7 +1027,7 @@ MlasComputeQSoftmax(
     size_t D,
     const float* LoopupTable,
     float Scale,
-    float ZeroPoint,
+    int ZeroPoint,
     bool is_signed,
     MLAS_THREADPOOL* ThreadPool
 );
